@@ -1,31 +1,24 @@
 #!/usr/bin/python3
 """
-Gather data from an API
+Uses the JSON placeholder api to query data about an employee
 """
-import requests
+
+from requests import get
 from sys import argv
 
+if __name__ == '__main__':
+    main_url = 'https://jsonplaceholder.typicode.com'
+    todo_url = main_url + "/user/{}/todos".format(argv[1])
+    name_url = main_url + "/users/{}".format(argv[1])
+    todo_result = get(todo_url).json()
+    name_result = get(name_url).json()
 
-def main():
-    user_id = argv[1]
-
-    # Obtener el nombre de usuario
-    user_url = f"https://jsonplaceholder.typicode.com/users/{user_id}"
-    user_response = requests.get(user_url)
-    user_data = user_response.json()
-    username = user_data["name"]
-
-    # Obtener la lista de tareas completadas del usuario
-    base_url = "https://jsonplaceholder.typicode.com"
-    todo_url = f"{base_url}/todos?userId={user_id}&completed=true"
-    todo_response = requests.get(todo_url)
-    todo_list = todo_response.json()
-
-    # Imprimir la información
-    print(f"El empleado {username} ha completado las tareas ({len(todo_list)}/{len(todo_list)}):")
-    for todo in todo_list:
-        print("\t- " + todo["title"])
-
-
-if __name__ == "__main__":
-    main()
+    todo_num = len(todo_result)
+    todo_complete = len([todo for todo in todo_result
+                         if todo.get("completed")])
+    name = name_result.get("name")
+    print("Employee {} is done with tasks({}/{}):"
+          .format(name, todo_complete, todo_num))
+    for todo in todo_result:
+        if (todo.get("completed")):
+            print("\t {}".format(todo.get("title")))
