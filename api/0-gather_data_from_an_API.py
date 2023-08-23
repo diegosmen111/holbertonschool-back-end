@@ -21,9 +21,9 @@ if __name__ == "__main__":
     todo_list = todo_response.json()
 
     # Imprimir la lista de tareas completadas
-    print(f"Employee Name: {name}")
+    print(f"Employee Name: {username}")
     print(f"To Do Count: {len(todo_list)}")
     print("First line formatting: OK")
-    print(f"Employee {name} is done with tasks ({len(todo_list)}):")
+    print(f"Employee {username} is done with tasks ({len(todo_list)}):")
     for todo in todo_list:
         print("\t- " + todo["title"])
