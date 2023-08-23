@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""Gather data from an API"""
+"""
+Gather data from an API
+"""
 import requests
 import sys
 
@@ -13,8 +15,9 @@ def main():
 
     # Hacemos la solicitud GET al punto final '/todos' para obtener la lista
     # de tareas para el empleado dado
-    response = requests.get(f'{BASE_URL}/todos?userId={employee_id}')
-
+    response = requests.get(
+    f'{BASE_URL}/todos?userId={employee_id}')
+    
     # Analizamos la respuesta JSON y contamos la cantidad de tareas completadas
     todos = response.json()
     tasks_completed = [todo for todo in todos if todo['completed']]
