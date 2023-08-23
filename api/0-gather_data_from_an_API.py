@@ -16,8 +16,7 @@ def main():
     # Hacemos la solicitud GET al punto final '/todos' para obtener la lista
     # de tareas para el empleado dado
     response = requests.get(
-    f'{BASE_URL}/todos?userId={employee_id}'
-)    
+    f'{BASE_URL}/todos?userId={employee_id}')    
     # Analizamos la respuesta JSON y contamos la cantidad de tareas completadas
     todos = response.json()
     tasks_completed = [todo for todo in todos if todo['completed']]
@@ -31,8 +30,7 @@ def main():
 
     # Imprimimos la información de la lista
     print('Employee {} is done with tasks({}/{}):'.format(
-    name, todos_done, todos_count
-))
+    name, todos_done, todos_count))
 
     for todo in tasks_completed:
         print(f'\t {todo["title"]}')
