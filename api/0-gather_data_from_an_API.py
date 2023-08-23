@@ -1,42 +1,37 @@
 #!/usr/bin/python3
-"""
-This script retrieves and processes employee tasks data from a REST API.
-"""
-
+"""Gather data from an API"""
 import requests
 import sys
 
-# Check if the correct number of command-line arguments is provided
-if len(sys.argv) != 2:
-    print("Usage: python3 0-gather_data_from_an_API.py <employee_id>")
-    sys.exit(1)
 
-# Get the employee ID from the command-line argument
-employee_id = sys.argv[1]
-url = 'https://jsonplaceholder.typicode.com/users/{}/todos'.format(employee_id)
+def main():
+    # URL de la REST API
+    BASE_URL = 'https://jsonplaceholder.typicode.com'
 
-# Make a GET request to the API
-response = requests.get(url)
+    # ID de empleado
+    employee_id = int(sys.argv[1])
 
-# Check if the employee exists
-if response.status_code == 404:
-    print('Employee with ID {} does not exist'.format(employee_id))
-    sys.exit(1)
+    # Hacemos la solicitud GET al punto final '/todos' para obtener la lista
+    # de tareas para el empleado dado
+    response = requests.get(f'{BASE_URL}/todos?userId={employee_id}')
 
-# Extract task data from the response
-todos = response.json()
+    # Analizamos la respuesta JSON y contamos la cantidad de tareas completadas
+    todos = response.json()
+    tasks_completed = [todo for todo in todos if todo['completed']]
+    num_tasks_completed = len(tasks_completed)
+    num_tasks = len(todos)
 
-# Filter completed tasks
-completed_tasks = [todo for todo in todos if todo['completed']]
-total_tasks = len(todos)
+    # Obtenemos el nombre del empleado del punto final '/users'
+    user_response = requests.get(f'{BASE_URL}/users/{employee_id}')
+    user_data = user_response.json()
+    employee_name = user_data['name']
 
-# Get the employee's name from the first task
-employee_name = todos[0]['username']
+    # Imprimimos la información de la lista
+    print(f"Employee {employee_name} has completed tasks ({num_tasks_completed}/{num_tasks}):")
 
-# Print employee and task information
-print('Employee Name: {}'.format(employee_name))
-print('Employee is done with tasks ({}/{}):'.format(len(completed_tasks), total_tasks))
+    for todo in tasks_completed:
+        print(f'\t {todo["title"]}')
 
-# Print completed tasks
-for task in completed_tasks:
-    print('\t {} {}'.format(task['title'], '(completed)'))
+
+if __name__ == '__main__':
+    main()
