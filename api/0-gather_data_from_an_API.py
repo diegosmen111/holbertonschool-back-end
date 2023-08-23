@@ -6,35 +6,65 @@ import requests
 import sys
 
 
-def main():
-    # URL de la REST API
-    BASE_URL = 'https://jsonplaceholder.typicode.com'
+def fetch_employee_todo_list(employee_id):
+    """
+    Fetches the employee's todo list from the JSONPlaceholder API.
 
+    Args:
+        employee_id (int): The ID of the employee.
+
+    Returns:
+        dict: A dictionary containing the employee's data and todo list.
+    """
+    base_url = "https://jsonplaceholder.typicode.com"
+    user_url = f"{base_url}/users/{employee_id}"
+    todo_url = f"{base_url}/todos?userId={employee_id}"
+
+    try:
+        user_response = requests.get(user_url)
+        todo_response = requests.get(todo_url)
+        user_data = user_response.json()
+        todo_data = todo_response.json()
+        return {"user_data": user_data, "todo_data": todo_data}
+    except requests.exceptions.RequestException as e:
+        print("Error:", e)
+        sys.exit(1)
+
+
+def display_employee_todo_progress(employee_name, done_tasks, total_tasks, completed_task_titles):
+    """
+    Displays the progress of an employee's tasks.
+
+    Args:
+        employee_name (str): The name of the employee.
+        done_tasks (int): The number of completed tasks.
+        total_tasks (int): The total number of tasks.
+        completed_task_titles (list): A list of titles of completed tasks.
+    """
+    print(f"Employee {employee_name} is done with tasks({done_tasks}/{total_tasks}):")
+    for title in completed_task_titles:
+        print(f"    {title}")
+
+
+def main():
+    """
+    Main function that fetches the employee's todo list and displays their progress.
+    """
     # ID de empleado
     employee_id = int(sys.argv[1])
 
-    # Hacemos la solicitud GET al punto final '/todos' para obtener la lista
-    # de tareas para el empleado dado
-    response = requests.get(
-    f'{BASE_URL}/todos?userId={employee_id}')    
-    # Analizamos la respuesta JSON y contamos la cantidad de tareas completadas
-    todos = response.json()
-    tasks_completed = [todo for todo in todos if todo['completed']]
-    num_tasks_completed = len(tasks_completed)
-    num_tasks = len(todos)
+    # Obtenemos la lista de tareas del empleado
+    data = fetch_employee_todo_list(employee_id)
+    user_data = data["user_data"]
+    todo_data = data["todo_data"]
 
-    # Obtenemos el nombre del empleado del punto final '/users'
-    user_response = requests.get(f'{BASE_URL}/users/{employee_id}')
-    user_data = user_response.json()
-    employee_name = user_data['name']
+    employee_name = user_data["name"]
+    completed_task_titles = [task["title"] for task in todo_data if task["completed"]]
+    done_tasks = len(completed_task_titles)
+    total_tasks = len(todo_data)
 
-    # Imprimimos la información de la lista
-    print('Employee {} is done with tasks({}/{}):'.format(
-    name, todos_done, todos_count))
-
-    for todo in tasks_completed:
-        print(f'\t {todo["title"]}')
+    display_employee_todo_progress(employee_name, done_tasks, total_tasks, completed_task_titles)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
