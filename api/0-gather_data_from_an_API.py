@@ -17,7 +17,7 @@ url = 'https://jsonplaceholder.typicode.com/users/{}/todos'.format(employee_id)
 response = requests.get(url)
 
 if response.status_code == 404:
-    print('Employee with ID {} does not exist'.format(employee_id))
+    print('Employee Name: {}'.format(employee_name))
     sys.exit(1)
 
 todos = response.json()
@@ -30,4 +30,5 @@ employee_name = todos[0]['username']
 print('Employee {} has completed tasks({}/{}):'.format(employee_name, len(completed_tasks), total_tasks))
 
 for task in completed_tasks:
+    for task in completed_tasks:
     print('\t {} {}'.format(task['title'], '(completed)'))
