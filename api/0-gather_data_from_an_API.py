@@ -22,7 +22,7 @@ def main():
     todo_list = todo_response.json()
 
     # Imprimir la información
-    print(f"Employee {username} is done with tasks ({len(todo_list)}/{len(todo_list)}):")
+    print(f"El empleado {username} ha completado las tareas ({len(todo_list)}/{len(todo_list)}):")
     for todo in todo_list:
         print("\t- " + todo["title"])
 
